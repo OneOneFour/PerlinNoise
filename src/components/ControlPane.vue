@@ -1,9 +1,9 @@
 <template>
     <div class="control_pane">
       <h3>Perlin Noise Generator</h3>
-      <p class="control-text">Pixels per Corner: {{pixelPerCorner}}</p>
+      <p class="control-text">Pixels per Corner: {{pixelPerCorner}} pixels</p>
       <input type="range" min=30 max=200 step=5 v-model="pixelPerCorner" />
-      <p class="control-text">Resolution: {{perlinResolution}}</p>
+      <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
       <input type="range" min=1 max=50 step=1 v-model="perlinResolution" />
       <button @click="$emit('regenerate',{pixelPerCorner,perlinResolution})"> Regenerate </button>
       <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
