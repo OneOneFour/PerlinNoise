@@ -1,23 +1,46 @@
 <template>
     <div class="control_pane">
-      <h3>Perlin Noise Generator</h3>
-      <p class="control-text">Pixels per Corner: {{pixelPerCorner}} pixels</p>
-      <input type="range" min=30 max=200 step=5 v-model="pixelPerCorner" />
-      <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
-      <input type="range" min=1 max=50 step=1 v-model="perlinResolution" />
-      <button @click="$emit('regenerate',{pixelPerCorner,perlinResolution})"> Regenerate </button>
-      <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
+      <div class="control-group">
+        <h3 class="control-pane-title">Perlin Noise Generator</h3>
+        <button @click="emitRegenerate"> Regenerate </button>
+        <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
+      </div>
+      <div class="resolution-group">
+        <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
+        <input type="range" min="1" max="50" step="1" v-model.number="perlinResolution" />
+      </div>
+      <tab-selector :tabs="getComponentArray" :names="['Manual','Auto']" @changetab="tabChanged"/>
+
     </div>
 </template>
 <script>
+import OctaveManual from './OctaveManual.vue';
+import OctaveAuto from './OctaveAuto.vue';
+import TabSelector from './TabSelector.vue';
+import OctaveStore from '../js/OctaveStore.js';
 export default {
     data:()=>({
-        pixelPerCorner:100,
         perlinResolution:10
     }),
+    components:{
+      TabSelector
+    },
     props:{
         showDetail:{type:Boolean}
-    }
+    },
+    computed:{
+      getComponentArray(){
+        return [OctaveManual,OctaveAuto]
+      }
+    },
+    methods:{
+      emitRegenerate(){
+        this.$emit('regenerate',{octaves:OctaveStore.octaves,perlinResolution:this.perlinResolution})
+      },
+      tabChanged(newMode){
+        OctaveStore.setMode(newMode.toLowerCase())
+      }
+    } 
 }
 </script>
 <style>
@@ -26,11 +49,18 @@ export default {
   background:white;
   left:10px;
   top:10px;
-  padding:10px;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
 }
-.control_pane h3{
+.control-pane-title{
+  display:inline-block;
   margin:0;
+}
+.control-group{
+  padding:10px;
+}
+.control-group button{
+  margin:0 10px;
+  float:right;
 }
 .control-text{
   display:inline;

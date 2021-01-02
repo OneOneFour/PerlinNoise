@@ -1,3 +1,6 @@
 module.exports={
-    publicPath:'/PerlinNoise/'
+    publicPath:'/PerlinNoise/',
+    configureWebpack: {
+        devtool: 'source-map'
+    }
 }

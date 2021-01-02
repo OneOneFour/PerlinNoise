@@ -5,7 +5,6 @@
     <p v-if="loading" class="loading-pane">Loading...</p>
   </div>
 </template>
-
 <script>
 import {valToColor} from './js/utils.js';
 import PerlinGrid from './js/PerlinGrid.js';
@@ -19,7 +18,7 @@ export default {
     loading:true,
     showDetail:false,
     perlinResolution:10,
-    pixelPerCorner:100,
+    octaves: [{pixelsPerCorner:100,weight:1.0}],
     perlinGrid:undefined,
     width:undefined,
     height:undefined,
@@ -32,29 +31,25 @@ export default {
     this.$nextTick(()=>{this.init()})
   },
   methods:{
-    recalculate({perlinResolution,pixelPerCorner}){
+    recalculate({perlinResolution,octaves}){
       this.loading = true
       setTimeout( ()=>{
         this.perlinResolution = perlinResolution
-        this.pixelPerCorner = pixelPerCorner
+        this.octaves = octaves
         this.init();
       },0) // This is gross but works..
     },
     init(){
-      this.gridX = Math.ceil(this.width/this.pixelPerCorner)
-      this.gridY = Math.ceil(this.height/this.pixelPerCorner)
-      this.perlinGrid = new PerlinGrid(this.gridX,this.gridY)
+      this.perlinGrid = new PerlinGrid(this.width,this.height,this.octaves)
       this.draw();
     },
-   
     draw(){
       this.ctx.clearRect(0,0,this.width,this.height)
-      let step = this.perlinResolution/(this.pixelPerCorner);
-      for(let x= step/2; x < this.gridX; x+= step){
-        for(let y=step/2; y < this.gridY; y+= step){
+      for(let x= this.perlinResolution/2; x < this.width; x+=this.perlinResolution){
+        for(let y=this.perlinResolution/2; y < this.height; y+=this.perlinResolution){
           let v = this.perlinGrid.perlin(x,y)
-          let yTopLeft = y*this.pixelPerCorner - this.perlinResolution/2
-          let xTopLeft = x*this.pixelPerCorner - this.perlinResolution/2
+          let yTopLeft = y - this.perlinResolution/2;
+          let xTopLeft = x - this.perlinResolution/2
           this.ctx.fillStyle= valToColor(v)
           this.ctx.fillRect(xTopLeft,yTopLeft,this.perlinResolution,this.perlinResolution)
           if(this.showDetail){
@@ -67,24 +62,25 @@ export default {
       this.loading=false;
     },
     drawBonus(){
-      for(let x=0; x < this.gridX; x++){
-        for(let y=0; y< this.gridY;y++){
-          this.ctx.beginPath();
-          this.ctx.strokeStyle='#000000'
-          this.ctx.rect(x*this.pixelPerCorner,y*this.pixelPerCorner,this.pixelPerCorner,this.pixelPerCorner)
-          this.ctx.stroke()
-        }
-      }
-      this.perlinGrid.corners.forEach((v,i)=>{
-        let y = Math.floor(i/(this.gridX+1)) * this.pixelPerCorner;
-        let x = (i % (this.gridX + 1)) * this.pixelPerCorner;
-        this.ctx.beginPath();
-        this.ctx.lineWidth=2;
-        this.ctx.strokeStyle='#00ff00'
-        this.ctx.moveTo(x,y)
-        this.ctx.lineTo(x + v.x * this.pixelPerCorner,y+v.y*this.pixelPerCorner)
-        this.ctx.stroke()
-      })
+      // TODO: Fix this! Maybe add special demonstration mode? 
+      // for(let x=0; x < this.gridX; x++){
+      //   for(let y=0; y< this.gridY;y++){
+      //     this.ctx.beginPath();
+      //     this.ctx.strokeStyle='#000000'
+      //     this.ctx.rect(x*this.pixelPerCorner,y*this.pixelPerCorner,this.pixelPerCorner,this.pixelPerCorner)
+      //     this.ctx.stroke()
+      //   }
+      // }
+      // this.perlinGrid.corners.forEach((v,i)=>{
+      //   let y = Math.floor(i/(this.gridX+1)) * this.pixelPerCorner;
+      //   let x = (i % (this.gridX + 1)) * this.pixelPerCorner;
+      //   this.ctx.beginPath();
+      //   this.ctx.lineWidth=2;
+      //   this.ctx.strokeStyle='#00ff00'
+      //   this.ctx.moveTo(x,y)
+      //   this.ctx.lineTo(x + v.x * this.pixelPerCorner,y+v.y*this.pixelPerCorner)
+      //   this.ctx.stroke()
+      // })
     }
   },
   watch:{
