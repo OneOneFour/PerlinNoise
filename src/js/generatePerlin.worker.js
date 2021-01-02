@@ -8,9 +8,10 @@ self.addEventListener('message',(e) => {
         for(let y=perlinResolution/2; y < height+perlinResolution; y+=perlinResolution){
             let v = perlinGrid.perlin(x,y)
             let {r,b} = valToColorRGB(v)
-            for(let y_i = y - perlinResolution/2; y_i < y + perlinResolution/2;y_i++ ){
-                for(let x_i = x - perlinResolution/2; x_i < x + perlinResolution/2; x_i++){
+            for(let y_i = Math.floor(y - perlinResolution/2); y_i < Math.ceil(y + perlinResolution/2) && y_i < height;y_i++ ){
+                for(let x_i = Math.floor(x - perlinResolution/2); x_i < Math.ceil(x + perlinResolution/2) && x_i < width ; x_i++){
                     let i = 4*(x_i + y_i*width)
+                    //Calcualte the pixel data manually lol
                     pixelData[i] = r
                     pixelData[i+1] = 0
                     pixelData[i+2] = b
