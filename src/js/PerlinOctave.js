@@ -2,17 +2,18 @@
 import {smootherstep,genRandomUnit,dotProduct} from './utils.js';
 
 class PerlinOctave2D{
-    constructor(width,height,pixelsPerCorner){
+    constructor(gridX,gridY,pixelsPerCorner){
         this.corners =[];
-        this.gridX = Math.ceil(width/pixelsPerCorner);
-        this.gridY = Math.ceil(height/pixelsPerCorner);
+        this.gridX = gridX
+        this.gridY = gridY
         this.pixelPerCorner = pixelsPerCorner;
+        // Grid dimensions have 1 added to them to account for the fact than n rows has n + 1 corners and vice versa
         for(let i =0; i < (this.gridX+1)*(this.gridY+1); i++){
             this.corners.push(genRandomUnit())
         }
     }
     getCorner(ix,iy){
-        if(ix > this.gridX || iy > this.gridY) throw "Outside of range"
+        if(ix > this.gridX || iy > this.gridY) throw `Outside of range: ix:${ix}, gridX:${this.MathgridX}\niy:${iy}, gridY:${this.gridY}`
             return this.corners[ix + iy*(this.gridX+1)];
       }
     perlin(x,y){// x,y in PIXEL space now

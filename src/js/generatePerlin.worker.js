@@ -2,7 +2,7 @@ import PerlinGrid from './PerlinGrid.js';
 import {valToColorRGB} from './utils.js';
 self.addEventListener('message',(e) => {
     let {width,height,perlinResolution,octaves} = e.data;
-    let perlinGrid = new PerlinGrid(width,height,octaves)
+    let perlinGrid = new PerlinGrid(width,height,octaves,perlinResolution) // Add on perlinResolution to the width to ensure 
     let pixelData = new Uint8ClampedArray(width*height*4); // LTR Downwards
     for(let x= perlinResolution/2; x < width+perlinResolution; x+=perlinResolution){
         for(let y=perlinResolution/2; y < height+perlinResolution; y+=perlinResolution){

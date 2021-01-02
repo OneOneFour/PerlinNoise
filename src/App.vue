@@ -2,7 +2,7 @@
   <div id="app">
     <canvas ref="perlincanvas" :width="width" :height="height"></canvas>
     <control-pane @regenerate="recalculate" @toggle-detail="showDetail = !showDetail" />
-    <p v-if="loading" class="loading-pane">Loading...</p>
+    <p v-if="loading" class="loading-pane">Loading... <button @click="cancelJob">Cancel</button></p>
   </div>
 </template>
 <script>
@@ -42,9 +42,13 @@ export default {
         this.ctx.clearRect(0,0,this.width,this.height)
         this.ctx.putImageData(response.data,0,0)
         this.loading = false;
+        this.renderWorker.terminate();
       });
     },
-
+    cancelJob(){
+      this.renderWorker.terminate();
+      this.loading = false;
+    }
   }
 }
 </script>
