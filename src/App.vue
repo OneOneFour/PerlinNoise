@@ -45,8 +45,8 @@ export default {
     },
     draw(){
       this.ctx.clearRect(0,0,this.width,this.height)
-      for(let x= this.perlinResolution/2; x < this.width; x+=this.perlinResolution){
-        for(let y=this.perlinResolution/2; y < this.height; y+=this.perlinResolution){
+      for(let x= this.perlinResolution/2; x < this.width+this.perlinResolution; x+=this.perlinResolution){
+        for(let y=this.perlinResolution/2; y < this.height+this.perlinResolution; y+=this.perlinResolution){
           let v = this.perlinGrid.perlin(x,y)
           let yTopLeft = y - this.perlinResolution/2;
           let xTopLeft = x - this.perlinResolution/2

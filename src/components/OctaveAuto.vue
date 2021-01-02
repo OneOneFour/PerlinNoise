@@ -11,7 +11,7 @@
         </div>
         <div class="falloff">
             <label>Lacunarity </label>
-            <input type="number" min=1 max=10 step=1 value=1 v-model.number="autoState.lacunarity"/>
+            <input type="number" min=1 max=5 step=0.25 value=2 v-model.number="autoState.lacunarity"/>
         </div>
         <div class="persistance">
             <label>Persistance </label>

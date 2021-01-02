@@ -1,3 +1,4 @@
+import {clamp} from './utils.js';
 let manualState = {
     octaves:[{pixelsPerCorner:100,weight:1}],
     addOctave(pixelsPerCorner,weight){
@@ -9,13 +10,13 @@ let manualState = {
 }
 let autoState = {
     persistance:0.25,
-    lacunarity:1,
+    lacunarity:2.0,
     maxFeatureSize:200,
     numOctaves:4,
     get octaves(){
         let octaves = []
         for(let i =0; i < this.numOctaves;i++){
-            octaves.push({pixelPerCorner:this.maxFeatureSize/(Math.pow(this.lacunarity,i)),weight: 1.0 * Math.pow(this.persistance,i)})
+            octaves.push({pixelsPerCorner:clamp(this.maxFeatureSize/(Math.pow(this.lacunarity,i)),1),weight: 1.0 * Math.pow(this.persistance,i)})
         }
         return octaves
     }
