@@ -6,8 +6,6 @@
   </div>
 </template>
 <script>
-import {valToColor} from './js/utils.js';
-import PerlinGrid from './js/PerlinGrid.js';
 import ControlPane from './components/ControlPane.vue'
 export default {
   name: 'App',
@@ -18,11 +16,10 @@ export default {
     loading:true,
     showDetail:false,
     perlinResolution:10,
-    octaves: [{pixelsPerCorner:100,weight:1.0}],
-    perlinGrid:undefined,
+    octaves: [{pixelsPerCorner:100,weight:1.0}], 
+    worker:undefined,
     width:undefined,
     height:undefined,
-    ctx:undefined
   }),
   mounted(){
     this.ctx = this.$refs.perlincanvas.getContext('2d')
@@ -32,61 +29,22 @@ export default {
   },
   methods:{
     recalculate({perlinResolution,octaves}){
-      this.loading = true
-      setTimeout( ()=>{
-        this.perlinResolution = perlinResolution
-        this.octaves = octaves
-        this.init();
-      },0) // This is gross but works..
+
+      this.perlinResolution = perlinResolution
+      this.octaves = octaves
+      this.init();
     },
     init(){
-      this.perlinGrid = new PerlinGrid(this.width,this.height,this.octaves)
-      this.draw();
+      this.loading = true
+      this.renderWorker = new Worker('./js/generatePerlin.worker.js',{type:'module'});
+      this.renderWorker.postMessage({width:this.width,height:this.height,perlinResolution:this.perlinResolution,octaves:this.octaves})
+      this.renderWorker.addEventListener('message',(response)=>{
+        this.ctx.clearRect(0,0,this.width,this.height)
+        this.ctx.putImageData(response.data,0,0)
+        this.loading = false;
+      });
     },
-    draw(){
-      this.ctx.clearRect(0,0,this.width,this.height)
-      for(let x= this.perlinResolution/2; x < this.width+this.perlinResolution; x+=this.perlinResolution){
-        for(let y=this.perlinResolution/2; y < this.height+this.perlinResolution; y+=this.perlinResolution){
-          let v = this.perlinGrid.perlin(x,y)
-          let yTopLeft = y - this.perlinResolution/2;
-          let xTopLeft = x - this.perlinResolution/2
-          this.ctx.fillStyle= valToColor(v)
-          this.ctx.fillRect(xTopLeft,yTopLeft,this.perlinResolution,this.perlinResolution)
-          if(this.showDetail){
-            this.ctx.fillStyle='#000000'
-            this.ctx.fillText(v.toFixed(2),xTopLeft,yTopLeft + this.perlinResolution/2)
-          }
-        }
-      }
-      if(this.showDetail) this.drawBonus();
-      this.loading=false;
-    },
-    drawBonus(){
-      // TODO: Fix this! Maybe add special demonstration mode? 
-      // for(let x=0; x < this.gridX; x++){
-      //   for(let y=0; y< this.gridY;y++){
-      //     this.ctx.beginPath();
-      //     this.ctx.strokeStyle='#000000'
-      //     this.ctx.rect(x*this.pixelPerCorner,y*this.pixelPerCorner,this.pixelPerCorner,this.pixelPerCorner)
-      //     this.ctx.stroke()
-      //   }
-      // }
-      // this.perlinGrid.corners.forEach((v,i)=>{
-      //   let y = Math.floor(i/(this.gridX+1)) * this.pixelPerCorner;
-      //   let x = (i % (this.gridX + 1)) * this.pixelPerCorner;
-      //   this.ctx.beginPath();
-      //   this.ctx.lineWidth=2;
-      //   this.ctx.strokeStyle='#00ff00'
-      //   this.ctx.moveTo(x,y)
-      //   this.ctx.lineTo(x + v.x * this.pixelPerCorner,y+v.y*this.pixelPerCorner)
-      //   this.ctx.stroke()
-      // })
-    }
-  },
-  watch:{
-    showDetail(){
-      this.draw()
-    }
+
   }
 }
 </script>

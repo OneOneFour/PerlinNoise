@@ -18,5 +18,9 @@ function valToColor(val){
     let clamp_val = clamp(val,-1,1)
     return `rgba(${Math.round(((clamp_val + 1)*255/2))},0,${Math.round((1 - clamp_val)*255/2)},255)`
 }
-export {valToColor,genRandomUnit,dotProduct,smootherstep,clamp};
+function valToColorRGB(val){
+    let clamp_val = clamp(val,-1,1)
+    return {r:Math.round(((clamp_val + 1)*255/2)),b:Math.round((1 - clamp_val)*255/2)}
+}
+export {valToColor,valToColorRGB,genRandomUnit,dotProduct,smootherstep,clamp};
   
