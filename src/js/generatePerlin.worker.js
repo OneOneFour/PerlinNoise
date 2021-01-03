@@ -2,10 +2,14 @@ import PerlinGrid from './PerlinGrid.js';
 import {valToColorRGB} from './utils.js';
 self.addEventListener('message',(e) => {
     let {width,height,perlinResolution,octaves} = e.data;
-    let perlinGrid = new PerlinGrid(width,height,octaves,perlinResolution) // Add on perlinResolution to the width to ensure 
-    let pixelData = new Uint8ClampedArray(width*height*4); // LTR Downwards
-    for(let x= perlinResolution/2; x < width+perlinResolution; x+=perlinResolution){
-        for(let y=perlinResolution/2; y < height+perlinResolution; y+=perlinResolution){
+    // Work out the smallest grid needed to span the screen 
+    let renderWidth = Math.ceil(width/perlinResolution) * perlinResolution
+    let renderHeight = Math.ceil(height/perlinResolution) * perlinResolution
+    let perlinGrid = new PerlinGrid(renderWidth,renderHeight,octaves) 
+    let pixelData = new Uint8ClampedArray(width*height*4);
+    // Iterating this way prevents any out of range exceptions
+    for(let x= perlinResolution/2; x < renderWidth; x+=perlinResolution){
+        for(let y=perlinResolution/2; y < renderHeight; y+=perlinResolution){
             let v = perlinGrid.perlin(x,y)
             let {r,b} = valToColorRGB(v)
             for(let y_i = Math.floor(y - perlinResolution/2); y_i < Math.ceil(y + perlinResolution/2) && y_i < height;y_i++ ){

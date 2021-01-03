@@ -17,7 +17,7 @@ export default {
     showDetail:false,
     perlinResolution:10,
     octaves: [{pixelsPerCorner:100,weight:1.0}], 
-    worker:undefined,
+    renderWorker:undefined,
     width:undefined,
     height:undefined,
   }),
