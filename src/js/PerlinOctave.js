@@ -13,7 +13,7 @@ class PerlinOctave2D{
         }
     }
     getCorner(ix,iy){
-        if(ix > this.gridX || iy > this.gridY) throw `Outside of range: ix:${ix}, gridX:${this.gridX}\niy:${iy}, gridY:${this.gridY}`
+        if(ix > this.gridX || iy > this.gridY) throw new RangeError();
             return this.corners[ix + iy*(this.gridX+1)];
       }
     perlin(x,y){// x,y in PIXEL space now
