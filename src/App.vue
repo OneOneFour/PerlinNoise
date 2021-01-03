@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import ControlPane from './components/ControlPane.vue'
+import ControlPane from '@/components/ControlPane.vue'
 export default {
   name: 'App',
   components:{
@@ -36,7 +36,7 @@ export default {
     },
     init(){
       this.loading = true
-      this.renderWorker = new Worker('./js/generatePerlin.worker.js',{type:'module'});
+      this.renderWorker = new Worker('@/js/generatePerlin.worker.js',{type:'module'});
       this.renderWorker.postMessage({width:this.width,height:this.height,perlinResolution:this.perlinResolution,octaves:this.octaves})
       this.renderWorker.addEventListener('message',(response)=>{
         this.ctx.clearRect(0,0,this.width,this.height)

@@ -17,7 +17,7 @@
 import OctaveManual from './OctaveManual.vue';
 import OctaveAuto from './OctaveAuto.vue';
 import TabSelector from './TabSelector.vue';
-import OctaveStore from '../js/OctaveStore.js';
+import OctaveStore from '@/js/OctaveStore.js';
 export default {
     data:()=>({
         perlinResolution:10

@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-import OctaveStore from '../js/OctaveStore';
+import OctaveStore from '@/js/OctaveStore';
 export default {
     data:()=>({
         autoState:OctaveStore.autoState

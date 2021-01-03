@@ -11,7 +11,7 @@
     </div>
 </template>
 <script>
-import OctaveStore from '../js/OctaveStore.js';
+import OctaveStore from '@/js/OctaveStore.js';
 export default {
     data:()=>({
         manualState:OctaveStore.manualState,
