@@ -1,3 +1,5 @@
+// TODO: Change to follow singleton pattern as seen in ColorStore.js
+
 import {clamp} from './utils.js';
 let manualState = {
     octaves:[{pixelsPerCorner:100,weight:1}],
@@ -21,7 +23,6 @@ let autoState = {
         return octaves
     }
 }
-
 export default{
     debug:true,
     autoState,
@@ -35,4 +36,3 @@ export default{
         this.mode = newMode;
     }
 }
-

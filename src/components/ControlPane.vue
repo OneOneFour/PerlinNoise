@@ -1,29 +1,34 @@
 <template>
     <div class="control_pane">
+      <color-map-picker v-if="showColor" v-on="$listeners" />
       <div class="control-group">
         <h3 class="control-pane-title">Perlin Noise Generator</h3>
         <button @click="emitRegenerate"> Regenerate </button>
         <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
+        <button @click="showColor = !showColor"> {{(showColor)? 'Hide':'Show'}} colour pane </button>
       </div>
       <div class="resolution-group">
         <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
         <input type="range" min="1" max="50" step="1" v-model.number="perlinResolution" />
       </div>
       <tab-selector :tabs="getComponentArray" :names="['Manual','Auto']" @changetab="tabChanged"/>
-
     </div>
 </template>
 <script>
 import OctaveManual from './OctaveManual.vue';
+import ColorMapPicker from './ColourmapPicker.vue';
 import OctaveAuto from './OctaveAuto.vue';
 import TabSelector from './TabSelector.vue';
 import OctaveStore from '@/js/OctaveStore.js';
 export default {
     data:()=>({
-        perlinResolution:10
+        perlinResolution:10,
+        showColor:false,
+        colors:'#ff0000'
     }),
     components:{
-      TabSelector
+      TabSelector,
+      ColorMapPicker
     },
     props:{
         showDetail:{type:Boolean}

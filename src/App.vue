@@ -1,12 +1,13 @@
 <template>
   <div id="app">
     <canvas ref="perlincanvas" :width="width" :height="height"></canvas>
-    <control-pane @regenerate="recalculate" @toggle-detail="showDetail = !showDetail" />
+    <control-pane @regenerate="recalculate" @toggle-detail="showDetail = !showDetail" @repaint="repaint" :showDetail="showDetail"/>
     <p v-if="loading" class="loading-pane">Loading... <button @click="cancelJob">Cancel</button></p>
   </div>
 </template>
 <script>
 import ControlPane from '@/components/ControlPane.vue'
+import ColorStore from '@/js/ColorStore.js';
 export default {
   name: 'App',
   components:{
@@ -17,6 +18,7 @@ export default {
     showDetail:false,
     perlinResolution:10,
     octaves: [{pixelsPerCorner:100,weight:1.0}], 
+    noise:[],
     renderWorker:undefined,
     width:undefined,
     height:undefined,
@@ -29,7 +31,6 @@ export default {
   },
   methods:{
     recalculate({perlinResolution,octaves}){
-
       this.perlinResolution = perlinResolution
       this.octaves = octaves
       this.init();
@@ -38,12 +39,21 @@ export default {
       this.loading = true
       this.renderWorker = new Worker('@/js/generatePerlin.worker.js',{type:'module'});
       this.renderWorker.postMessage({width:this.width,height:this.height,perlinResolution:this.perlinResolution,octaves:this.octaves})
-      this.renderWorker.addEventListener('message',(response)=>{
-        this.ctx.clearRect(0,0,this.width,this.height)
-        this.ctx.putImageData(response.data,0,0)
+      this.renderWorker.addEventListener('message',({data})=>{ // response is a grid of renderWidth/perlinRes x renderHeight/perlinRes
+        this.noise = data
         this.loading = false;
         this.renderWorker.terminate();
+        this.repaint();
       });
+    },
+    repaint(){
+      this.ctx.clearRect(0,0,this.width,this.height)
+      for(let x =0; x < this.noise.length;x++){
+        for(let y=0; y < this.noise[x].length;y++){
+          this.ctx.fillStyle = ColorStore.map(this.noise[x][y])
+          this.ctx.fillRect(x*this.perlinResolution,y*this.perlinResolution,this.perlinResolution,this.perlinResolution)
+        }
+      }
     },
     cancelJob(){
       this.renderWorker.terminate();
