@@ -10,6 +10,7 @@ const _data = {
 _data.map = generateColormap(_data.stops,_data.blend)
 
 const ColorStore = {
+    // blend and stops are READONLY -> Do not write directly to these variables, always use mutuations!
     get blend() { return _data.blend},
     get stops() { return _data.stops},
     get map() { return _data.map },
@@ -20,7 +21,20 @@ const ColorStore = {
     updateStopColor(i,newVal){
         _data.stops[i].color=newVal
         _data.map = generateColormap(_data.stops,_data.blend)
-    }
+    },
+    addStop(val,color){
+        if(typeof color === 'undefined'){
+            _data.stops.push({
+                val:val,
+                color:this.map(val)
+            })
+        }else{
+            _data.stops.push({
+                val:val,
+                color:color
+            })
+        }
+    },
 }
 Object.freeze(ColorStore);
 export default ColorStore;

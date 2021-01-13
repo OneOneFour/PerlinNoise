@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import '@/assets/global.css';
+import ColorStore from '@/js/ColorStore.js';
 Vue.config.productionTip = false
 
 // Click-outside directive 
@@ -19,3 +20,4 @@ Vue.directive('click-outside', {
 new Vue({
   render: h => h(App),
 }).$mount('#app')
+window.ColorStore = ColorStore

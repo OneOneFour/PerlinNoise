@@ -1,11 +1,12 @@
 <template>
-    <div class="colormap-picker">
+    <div class="colormap-picker" :style="{width:10 + canvasWidth+'px'}">
         <h3>Colourmap Picker</h3>
         <span>Blend</span>
         <input type=range min=0 max=1 step=0.05 :value="colorstore.blend" @input="setBlend"/>
-        <div class="colorbox" ref="colorbox">
-            <div class="stop-map">
-                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=i @update-color="changeColor(i,$event)"/>
+        <div class="colorbox" ref="colorbox" @mousemove="updatePosition" @mouseenter="showHint=true" @mouseleave="showHint=false" @click="createStop" :class="{'can-place':validPosition}">
+            <div class="stop-map" >
+                <color-stop v-if="showHint && validPosition" :val="curMousePoint" :color="colorstore.map(curMousePoint)" ghost/>
+                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=stop.val @update-color="changeColor(i,$event)"/>
             </div>
             <canvas ref=colorband class="colorband" :width="canvasWidth" :height="canvasHeight" />
         </div>        
@@ -14,15 +15,18 @@
 <script>
 import ColorStop from './ColorStop.vue';
 import ColorStore from '@/js/ColorStore.js';
+import { clamp } from '@/js/utils';
 export default {
     components:{
         ColorStop
     },
     data:()=>({
         colorstore:ColorStore,
-        canvasWidth:240,
+        canvasWidth:400,
         canvasHeight:40,
         ctx: null,
+        curMousePoint:0,
+        showHint:false
     }),
     mounted(){
         // this.canvasWidth = this.$refs.colorbox.getBoundingClientRect().width
@@ -30,12 +34,23 @@ export default {
         this.ctx = this.$refs.colorband.getContext('2d')
         this.repaint();
     },
+    computed:{
+        validPosition() {
+            //Elements are 15px by default
+            let sizeOfElem = 30/this.canvasWidth
+            let val = true
+            for(let i=0; i < ColorStore.stops.length; i++){
+                val &= Math.abs(this.curMousePoint - ColorStore.stops[i].val) >= sizeOfElem
+            }
+            return val
+        }
+    },
     methods:{
         repaint(){
             requestAnimationFrame(this.repaint)
             this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
             for(let i=0; i <= this.canvasWidth; i++){
-                let v = 2*i/this.canvasWidth - 1
+                let v = 2*i/this.canvasWidth - 1 // map [0 <> canvasWidth] -> [-1 <> 1]
                 this.ctx.fillStyle=this.colorstore.map(v)
                 this.ctx.fillRect(i,0,1,this.canvasHeight)
             }
@@ -47,6 +62,13 @@ export default {
         changeColor(i,e){
             ColorStore.updateStopColor(i,e)
             this.$emit('repaint')
+        },
+        updatePosition({clientX}){
+            let local_val = (clientX - this.$refs.colorbox.getBoundingClientRect().left)*2/this.$refs.colorbox.getBoundingClientRect().width - 1
+            this.curMousePoint = clamp(local_val,-1,1)
+        },
+        createStop(){
+            if(this.validPosition)  ColorStore.addStop(this.curMousePoint)
         }
     }
 }
@@ -58,7 +80,6 @@ export default {
     left: calc(100% + 10px);
     box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
     padding:10px;
-    width: 250px;
 }
 .colormap-picker > h3{
     margin:0;
@@ -71,6 +92,9 @@ export default {
 .colorbox{
     margin:5px;
     height:50px;
+}
+.colorbox.can-place{
+    cursor:copy;
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click.stop="showPicker = true">
+    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click.stop="showPicker = true" :class="{'ghost':ghost}">
         <chrome-picker :value="curColor" @input="updateColor"  v-if="showPicker" v-click-outside="hidePicker" class="picker"/>
     </div>
 </template>
@@ -14,27 +14,31 @@ export default {
         val:{
             type:Number,
             required:true
+        },
+        ghost:{
+            type:Boolean
         }
     },
     data:()=>({
-        curColor:null,
-        showPicker:false
+        tmpColor:undefined,
+        showPicker:false,
     }),
-    mounted(){
-        this.curColor = this.color
-    },
+    
     methods:{
         hidePicker(){
             this.showPicker = false
+            this.$emit('update-color',this.curColor)
         },
         updateColor({hex}){
-            this.curColor = hex
-            this.$emit('update-color',this.curColor)
+            this.tmpColor = hex
         }
     },
     computed:{
         stopLeft(){
             return `${(this.val + 1)*50}%`
+        },
+        curColor(){
+            return (typeof this.tmpColor !== 'undefined')? this.tmpColor : this.color
         }
     },
     components:{
@@ -44,15 +48,23 @@ export default {
 </script>
 <style>
 .color-stop{
-    height:10px;
-    width:10px;
+    height:15px;
+    width:15px;
+    box-sizing: border-box;
     border: 2px solid #aaaaaa;
     position: absolute;
     transform: translate(-50%,0);
+}
+.color-stop:not(.ghost){
+    cursor: pointer;
 }
 .picker{
     position:relative;
     left: 15px;
     top:15px;
+}
+.ghost{
+    opacity: 0.5;
+    
 }
 </style>

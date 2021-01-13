@@ -5,7 +5,7 @@
         <h3 class="control-pane-title">Perlin Noise Generator</h3>
         <button @click="emitRegenerate"> Regenerate </button>
         <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
-        <button @click="showColor = !showColor"> {{(showColor)? 'Hide':'Show'}} colour pane </button>
+        <button @click="showColor = !showColor"> {{(showColor)? 'Hide':'Show'}} Colormap </button>
       </div>
       <div class="resolution-group">
         <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
