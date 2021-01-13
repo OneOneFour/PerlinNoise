@@ -1,6 +1,6 @@
 <template>
-    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click.stop="showPicker = true" :class="{'ghost':ghost}">
-        <chrome-picker :value="curColor" @input="updateColor"  v-if="showPicker" v-click-outside="hidePicker" class="picker"/>
+    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click="enablePicker" :class="{'ghost':ghost}" v-click-outside="hidePicker" >
+        <chrome-picker :value="curColor" @input="updateColor"  v-if="showPicker"  class="picker"/>
     </div>
 </template>
 <script>
@@ -26,11 +26,18 @@ export default {
     
     methods:{
         hidePicker(){
-            this.showPicker = false
-            this.$emit('update-color',this.curColor)
+            if(this.showPicker){
+                this.showPicker = false
+                this.$emit('update-color',this.curColor)
+            }
         },
         updateColor({hex}){
             this.tmpColor = hex
+        },
+        enablePicker(){
+            if(!this.ghost){
+                this.showPicker = true;
+            }
         }
     },
     computed:{

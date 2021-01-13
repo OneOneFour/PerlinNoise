@@ -26,6 +26,7 @@ export default {
         canvasHeight:40,
         ctx: null,
         curMousePoint:0,
+        lastCreatePos:undefined,
         showHint:false
     }),
     mounted(){
@@ -37,6 +38,7 @@ export default {
     computed:{
         validPosition() {
             //Elements are 15px by default
+            if(this.lastCreatePos == this.curMousePoint) return false;
             let sizeOfElem = 30/this.canvasWidth
             let val = true
             for(let i=0; i < ColorStore.stops.length; i++){
@@ -68,7 +70,10 @@ export default {
             this.curMousePoint = clamp(local_val,-1,1)
         },
         createStop(){
-            if(this.validPosition)  ColorStore.addStop(this.curMousePoint)
+            if(this.validPosition) {
+                ColorStore.addStop(this.curMousePoint)
+                this.lastCreatePos = this.curMousePoint
+            }
         },
         removeStop(e,i){
             e.preventDefault();
