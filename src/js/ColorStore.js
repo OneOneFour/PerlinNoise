@@ -35,6 +35,11 @@ const ColorStore = {
             })
         }
     },
+    removeStop(i){
+        if(_data.stops[i].val <= -1 || _data.stops[i].val == 1) return
+        _data.stops.splice(i,1)
+        _data.map = generateColormap(_data.stops,_data.blend)
+    }
 }
 Object.freeze(ColorStore);
 export default ColorStore;

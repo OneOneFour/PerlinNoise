@@ -6,7 +6,7 @@
         <div class="colorbox" ref="colorbox" @mousemove="updatePosition" @mouseenter="showHint=true" @mouseleave="showHint=false" @click="createStop" :class="{'can-place':validPosition}">
             <div class="stop-map" >
                 <color-stop v-if="showHint && validPosition" :val="curMousePoint" :color="colorstore.map(curMousePoint)" ghost/>
-                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=stop.val @update-color="changeColor(i,$event)"/>
+                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=stop.val @update-color="changeColor(i,$event)" @contextmenu.native="removeStop($event,i)"/>
             </div>
             <canvas ref=colorband class="colorband" :width="canvasWidth" :height="canvasHeight" />
         </div>        
@@ -69,6 +69,10 @@ export default {
         },
         createStop(){
             if(this.validPosition)  ColorStore.addStop(this.curMousePoint)
+        },
+        removeStop(e,i){
+            e.preventDefault();
+            ColorStore.removeStop(i)
         }
     }
 }
