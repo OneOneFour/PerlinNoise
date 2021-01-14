@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <canvas ref="perlincanvas" :width="width" :height="height"></canvas>
-    <control-pane @regenerate="recalculate" @toggle-detail="showDetail = !showDetail" @repaint="repaint" :showDetail="showDetail"/>
+    <control-pane @regenerate="recalculate" @toggle-detail="showDetail = !showDetail" @repaint="repaint" @download="download" />
     <p v-if="loading" class="loading-pane">Loading... <button @click="cancelJob">Cancel</button></p>
   </div>
 </template>
@@ -16,29 +16,31 @@ export default {
   data:()=>({
     loading:true,
     showDetail:false,
-    perlinResolution:10,
-    octaves: [{pixelsPerCorner:100,weight:1.0}], 
+    perlinResolution:undefined,
+    octaves: undefined, 
     noise:[],
     renderWorker:undefined,
     width:undefined,
     height:undefined,
+    seed:undefined
   }),
   mounted(){
     this.ctx = this.$refs.perlincanvas.getContext('2d')
     this.width = window.innerWidth
     this.height = window.innerHeight
-    this.$nextTick(()=>{this.init()})
   },
   methods:{
-    recalculate({perlinResolution,octaves}){
+    recalculate({perlinResolution,octaves,seed}){
       this.perlinResolution = perlinResolution
       this.octaves = octaves
+      this.seed = seed;
       this.init();
+
     },
     init(){
       this.loading = true
       this.renderWorker = new Worker('@/js/generatePerlin.worker.js',{type:'module'});
-      this.renderWorker.postMessage({width:this.width,height:this.height,perlinResolution:this.perlinResolution,octaves:this.octaves})
+      this.renderWorker.postMessage({width:this.width,height:this.height,perlinResolution:this.perlinResolution,octaves:this.octaves,seed:this.seed})
       this.renderWorker.addEventListener('message',({data})=>{ // response is a grid of renderWidth/perlinRes x renderHeight/perlinRes
         this.noise = data
         this.loading = false;
@@ -54,6 +56,13 @@ export default {
           this.ctx.fillRect(x*this.perlinResolution,y*this.perlinResolution,this.perlinResolution,this.perlinResolution)
         }
       }
+    },
+    download(){
+      let rawData = this.$refs.perlincanvas.toDataURL("image/png")
+      let virtualLink = document.createElement("a")
+      virtualLink.href = rawData
+      virtualLink.download = `${this.seed} image.png`
+      virtualLink.click();
     },
     cancelJob(){
       this.renderWorker.terminate();

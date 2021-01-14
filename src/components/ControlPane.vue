@@ -1,73 +1,93 @@
 <template>
-    <div class="control_pane">
-      <color-map-picker v-if="showColor" v-on="$listeners" />
-      <div class="control-group">
-        <h3 class="control-pane-title">Perlin Noise Generator</h3>
-        <button @click="emitRegenerate"> Regenerate </button>
-        <button @click="$emit('toggle-detail')"> {{(showDetail)? 'Hide':'Show'}} detail </button>
-        <button @click="showColor = !showColor"> {{(showColor)? 'Hide':'Show'}} Colormap </button>
+    <div class="control_group">
+      <div class="main-panel panel">
+        <h2 class="main-panel-title">Perlin Noise Generator  <button @click="emitRegenerate" class="button regenerate"><font-awesome-icon icon="redo"/><span>Regenerate</span></button></h2>
+        <div class="panel-content main-panel-content">
+          <seed-generator @input="seed=$event" /> 
+          <button class="button download" @click.prevent="$emit('download')" ><font-awesome-icon icon="download"/><span>Download Image</span></button>
+        </div>
       </div>
-      <div class="resolution-group">
-        <p class="control-text">Resolution: {{perlinResolution}} pixels</p>
-        <input type="range" min="1" max="50" step="1" v-model.number="perlinResolution" />
-      </div>
-      <tab-selector :tabs="getComponentArray" :names="['Manual','Auto']" @changetab="tabChanged"/>
+      <toggle-panel title="Colormap Settings" icon="palette" style="z-index:10;">
+        <color-map-picker v-on="$listeners" />
+      </toggle-panel>
+      <toggle-panel title="Generation Settings" icon="cogs">
+        <generation-settings v-on="$listeners"/>
+      </toggle-panel>
     </div>
 </template>
 <script>
-import OctaveManual from './OctaveManual.vue';
 import ColorMapPicker from './ColourmapPicker.vue';
-import OctaveAuto from './OctaveAuto.vue';
-import TabSelector from './TabSelector.vue';
+import GenerationSettings from './GenerationSettings.vue';
+import SeedGenerator from './SeedGenerator.vue';
+import TogglePanel from './TogglePanel.vue';
 import OctaveStore from '@/js/OctaveStore.js';
 export default {
     data:()=>({
-        perlinResolution:10,
-        showColor:false,
-        colors:'#ff0000'
+        seed:null
     }),
     components:{
-      TabSelector,
-      ColorMapPicker
-    },
-    props:{
-        showDetail:{type:Boolean}
-    },
-    computed:{
-      getComponentArray(){
-        return [OctaveManual,OctaveAuto]
-      }
+      GenerationSettings,
+      ColorMapPicker,
+      TogglePanel,
+      SeedGenerator
     },
     methods:{
       emitRegenerate(){
-        this.$emit('regenerate',{octaves:OctaveStore.octaves,perlinResolution:this.perlinResolution})
+        this.$emit('regenerate',{octaves:OctaveStore.octaves,perlinResolution:OctaveStore.perlinResolution,seed:this.seed})
       },
-      tabChanged(newMode){
-        OctaveStore.setMode(newMode.toLowerCase())
-      }
-    } 
+    },
+    mounted(){
+      this.$nextTick(()=> this.emitRegenerate());
+    }
 }
 </script>
 <style>
-.control_pane{
-  position: absolute;
-  background:white;
-  left:10px;
-  top:10px;
-  box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+.control_group{
+  display:flex;
+  flex-direction: column;
+  position:absolute;
+  left:0;
+  width:30rem;
+  top:0;
 }
-.control-pane-title{
-  display:inline-block;
+.main-panel{
+  order:-1;
+}
+.main-panel-title{
+  background:#333;
+  border-radius: 15px 15px 0 0;
+  padding: 0.3rem 0.6rem;
+  color:white;
   margin:0;
 }
-.control-group{
-  padding:10px;
+.main-panel-content{
+  display:flex;
+  justify-content: space-between;
 }
-.control-group button{
-  margin:0 10px;
+.button.regenerate{
   float:right;
+  background-color: #c0392b;
 }
-.control-text{
-  display:inline;
+.button.download{
+  padding-left:0.5rem;
+  background-color:#9b59b6;
 }
+.button.download:hover{
+  background-color:#8e44ad;
+}
+.button.button.regenerate:hover{
+  background-color:#9a2e22;
+}
+@supports  not((backdrop-filter: blur(40px)) or (-webkit-backdrop-filter: blur(40px))){
+  .panel{
+      background: rgba(0, 0, 0, 0.25);
+  }
+}
+@supports  (backdrop-filter: blur(40px)) or (-webkit-backdrop-filter: blur(40px)){
+  .panel{
+    backdrop-filter: blur(40px) brightness(75%);
+    -webkit-backdrop-filter: blur(40px) brightness(75%);
+  }
+}
+
 </style>

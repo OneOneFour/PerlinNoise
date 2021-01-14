@@ -28,6 +28,7 @@ export default{
     autoState,
     manualState,
     mode:'manual',
+    perlinResolution:10,
     get octaves(){
         if(this.mode=='auto') return this.autoState.octaves
         return this.manualState.octaves

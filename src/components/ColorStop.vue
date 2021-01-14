@@ -1,10 +1,12 @@
 <template>
-    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click="enablePicker" :class="{'ghost':ghost}" v-click-outside="hidePicker" >
+    <div class="color-stop" :style="{backgroundColor:curColor,left:stopLeft}" @click.stop="enablePicker" :class="{'ghost':ghost}" v-click-outside="hidePicker">
         <chrome-picker :value="curColor" @input="updateColor"  v-if="showPicker"  class="picker"/>
     </div>
 </template>
 <script>
 import {Chrome} from 'vue-color';
+import Vue from 'vue';
+const stopBus = new Vue();
 export default {
     props:{
         color:{
@@ -23,7 +25,14 @@ export default {
         tmpColor:undefined,
         showPicker:false,
     }),
-    
+    mounted(){
+        stopBus.$on('picker-select',(id)=>{
+            if(id !== this._uid) this.showPicker = false;
+        })
+        window.addEventListener('keydown',(e)=>{
+            if(e.key=='Enter' || e.key == 'Escape' || e.key == 'Esc') this.showPicker = false
+        })
+    },
     methods:{
         hidePicker(){
             if(this.showPicker){
@@ -37,6 +46,8 @@ export default {
         enablePicker(){
             if(!this.ghost){
                 this.showPicker = true;
+                stopBus.$emit('picker-select',this._uid)
+                this.$emit('disable-track')
             }
         }
     },
@@ -69,6 +80,7 @@ export default {
     position:relative;
     left: 15px;
     top:15px;
+    z-index:10;
 }
 .ghost{
     opacity: 0.5;

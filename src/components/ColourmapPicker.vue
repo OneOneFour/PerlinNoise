@@ -1,12 +1,11 @@
 <template>
     <div class="colormap-picker" :style="{width:10 + canvasWidth+'px'}">
-        <h3>Colourmap Picker</h3>
         <span>Blend</span>
         <input type=range min=0 max=1 step=0.05 :value="colorstore.blend" @input="setBlend"/>
         <div class="colorbox" ref="colorbox" @mousemove="updatePosition" @mouseenter="showHint=true" @mouseleave="showHint=false" @click="createStop" :class="{'can-place':validPosition}">
             <div class="stop-map" >
                 <color-stop v-if="showHint && validPosition" :val="curMousePoint" :color="colorstore.map(curMousePoint)" ghost/>
-                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=stop.val @update-color="changeColor(i,$event)" @contextmenu.native="removeStop($event,i)"/>
+                <color-stop v-for="(stop,i) in colorstore.stops" :val=stop.val :color=stop.color :key=stop.val @update-color="changeColor(i,$event)" @contextmenu.native="removeStop($event,i)" @disable-track="showHint=false"/>
             </div>
             <canvas ref=colorband class="colorband" :width="canvasWidth" :height="canvasHeight" />
         </div>        
@@ -83,24 +82,12 @@ export default {
 }
 </script>
 <style>
-.colormap-picker{
-    position:absolute;
-    background:white;
-    left: calc(100% + 10px);
-    box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
-    padding:10px;
-}
-.colormap-picker > h3{
-    margin:0;
-    padding:0;
-}
 .stop-map{
     position:relative;
     height:15px;
 }
 .colorbox{
     margin:5px;
-    height:50px;
 }
 .colorbox.can-place{
     cursor:copy;

@@ -53,5 +53,10 @@ function valToColorRGB(val){
     let clamp_val = clamp(val,-1,1)
     return {r:Math.round(((clamp_val + 1)*255/2)),b:Math.round((1 - clamp_val)*255/2)}
 }
-export {valToColor,valToColorRGB,genRandomUnit,dotProduct,smootherstep,clamp,hextorgb,rgbtohex,generateColormap};
+function islight(hex){
+    let {r,g,b} = hextorgb(hex)
+    return (r + g + b)/3 >= 127.5
+}
+
+export {valToColor,valToColorRGB,genRandomUnit,dotProduct,smootherstep,clamp,hextorgb,rgbtohex,generateColormap,islight};
   
