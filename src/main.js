@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import '@/assets/global.css';
 import {library} from '@fortawesome/fontawesome-svg-core';
-import {faRedo,faPalette,faTimesCircle,faCogs,faDice,faDownload,faInfo} from '@fortawesome/free-solid-svg-icons'
+import {faRedo,faPalette,faTimesCircle,faCogs,faDice,faDownload,faInfo,faExclamationTriangle,faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 // Configure Library + add global component
@@ -13,6 +13,8 @@ library.add(faCogs);
 library.add(faDice);
 library.add(faDownload);
 library.add(faInfo);
+library.add(faExclamationTriangle);
+library.add(faPlusCircle);
 Vue.component('font-awesome-icon',FontAwesomeIcon);
 
 Vue.config.productionTip = false

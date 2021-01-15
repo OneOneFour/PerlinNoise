@@ -1,7 +1,12 @@
 <template>
     <div class="colormap-picker" :style="{width:10 + canvasWidth+'px'}">
-        <span>Blend</span>
-        <input type=range min=0 max=1 step=0.05 :value="colorstore.blend" @input="setBlend"/>
+        <div class="blend-group">
+            <div class="blend-title" :style="{width:canvasWidth + 'px'}">
+                Blend - {{Math.round(colorstore.blend*100)}} %  
+            </div>
+            <input type=range min=0 max=1 step=0.05 :value="colorstore.blend" @change="$emit('repaint')" @input="setBlend" class="blend-range"/>
+        </div>
+
         <div class="colorbox" ref="colorbox" @mousemove="updatePosition" @mouseenter="showHint=true" @mouseleave="showHint=false" @click="createStop" :class="{'can-place':validPosition}">
             <div class="stop-map" >
                 <color-stop v-if="showHint && validPosition" :val="curMousePoint" :color="colorstore.map(curMousePoint)" ghost/>
@@ -15,6 +20,7 @@
 import ColorStop from './ColorStop.vue';
 import ColorStore from '@/js/ColorStore.js';
 import { clamp } from '@/js/utils';
+// import _ from 'lodash';
 export default {
     components:{
         ColorStop
@@ -58,7 +64,7 @@ export default {
         },
         setBlend({target}){
             ColorStore.setBlend(target.value)
-            this.$emit('repaint');
+            this.$forceUpdate();
         },
         changeColor(i,e){
             ColorStore.updateStopColor(i,e)
@@ -77,6 +83,7 @@ export default {
         removeStop(e,i){
             e.preventDefault();
             ColorStore.removeStop(i)
+            this.$emit('repaint')
         }
     }
 }
@@ -92,5 +99,7 @@ export default {
 .colorbox.can-place{
     cursor:copy;
 }
-
+.blend-range{
+    width:90%;
+}
 </style>

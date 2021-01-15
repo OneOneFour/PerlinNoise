@@ -19,8 +19,9 @@ function blend(x,a){
 }
 
 function hextorgb(hex){
-    if (hex.length != 7) throw Error("Not a valid 8bit hex code!")
-    return {r:parseInt(hex[1]+hex[2],16),g:parseInt(hex[3]+hex[4],16),b:parseInt(hex[5] +hex[6],16)}
+    if (hex.length == 7) return {r:parseInt(hex[1]+hex[2],16),g:parseInt(hex[3]+hex[4],16),b:parseInt(hex[5] +hex[6],16)}
+    else if(hex.length === 4) return {r:parseInt(hex[1]+hex[1],16),g:parseInt(hex[2] +hex[2],16),b:parseInt(hex[3] + hex[3],16)}
+    else throw new Error("Not a valid hex code");
 }
 function rgbtohex(r,g,b){
     return `#${Math.round(r).toString(16).padStart(2,"0")}${Math.round(g).toString(16).padStart(2,"0")}${Math.round(b).toString(16).padStart(2,"0")}`

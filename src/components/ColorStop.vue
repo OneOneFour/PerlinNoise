@@ -30,7 +30,7 @@ export default {
             if(id !== this._uid) this.showPicker = false;
         })
         window.addEventListener('keydown',(e)=>{
-            if(e.key=='Enter' || e.key == 'Escape' || e.key == 'Esc') this.showPicker = false
+            if(e.key=='Enter' || e.key == 'Escape' || e.key == 'Esc') this.hidePicker();
         })
     },
     methods:{

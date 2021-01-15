@@ -7,10 +7,10 @@
           <button class="button download" @click.prevent="$emit('download')" ><font-awesome-icon icon="download"/><span>Download Image</span></button>
         </div>
       </div>
-      <toggle-panel title="Colormap Settings" icon="palette" style="z-index:10;">
+      <toggle-panel title="Colormap Settings" icon="palette" style="z-index:10;" color="#333333">
         <color-map-picker v-on="$listeners" />
       </toggle-panel>
-      <toggle-panel title="Generation Settings" icon="cogs">
+      <toggle-panel title="Generation Settings" icon="cogs" color="#333333">
         <generation-settings v-on="$listeners"/>
       </toggle-panel>
     </div>
@@ -47,11 +47,12 @@ export default {
   flex-direction: column;
   position:absolute;
   left:0;
-  width:30rem;
+  width:100vw;
   top:0;
 }
 .main-panel{
   order:-1;
+  width:30rem;
 }
 .main-panel-title{
   background:#333;

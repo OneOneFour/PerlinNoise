@@ -11,7 +11,7 @@ let manualState = {
     }
 }
 let autoState = {
-    persistance:0.25,
+    persistance:0.75,
     lacunarity:2.0,
     maxFeatureSize:200,
     numOctaves:4,

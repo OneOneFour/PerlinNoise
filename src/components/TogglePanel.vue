@@ -35,6 +35,11 @@ export default {
             default:false
         }
     },
+    provide(){
+        return{
+            groupColor:this.color
+        }
+    },
     data:()=>({
         toggle: false,
         hover:false
@@ -60,7 +65,7 @@ export default {
     cursor:pointer;
 }
 .toggle-icon:hover>.toggle-hover-description{
-    display:block;
+    opacity:1;
 }
 .icon-wrapper{
     text-align: center;
@@ -84,7 +89,7 @@ export default {
     margin: 0 0.5rem;
 }
 .toggle-hover-description{
-    display:none;
+    opacity:0;
     position: absolute;
     left:50%;
     padding: 0.25rem;
@@ -94,8 +99,12 @@ export default {
     white-space: nowrap;
     height: 2rem;
     line-height: 2rem;
-    
+    transition: opacity 0.1s ease-in-out;
 }
+
+
+
+
 .toggle-hover-description:after{
     content:"";
     position:absolute;

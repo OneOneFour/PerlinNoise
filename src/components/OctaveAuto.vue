@@ -28,5 +28,7 @@ export default {
 } 
 </script>
 <style>
-
+.octave-auto{
+    padding: 0.75rem;
+}
 </style>
