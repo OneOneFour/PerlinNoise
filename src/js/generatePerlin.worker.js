@@ -8,6 +8,6 @@ self.addEventListener('message',(e) => {
     let renderHeight = Math.ceil(height/perlinResolution) * perlinResolution
     let perlinGrid = new PerlinGrid(renderWidth,renderHeight,octaves) 
     // Iterating this way prevents any out of range exceptions
-    self.postMessage(perlinGrid.getGrid(perlinResolution)) // Return ImageData Object
+    self.postMessage({img:perlinGrid.getGrid(perlinResolution)}) // Return ImageData Object
 })
 

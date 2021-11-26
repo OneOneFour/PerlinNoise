@@ -1,5 +1,12 @@
 <template>
     <div class="colormap-picker" :style="{width:10 + canvasWidth+'px'}">
+        <div class="debug-group">
+            <div class="debug-title">
+                <input type="checkbox" @change="updateDebug"
+                        :checked="colorstore.debug">
+                {{debugText}}
+            </div>
+        </div>
         <div class="blend-group">
             <div class="blend-title" :style="{width:canvasWidth + 'px'}">
                 Blend - {{Math.round(colorstore.blend*100)}} %  
@@ -30,6 +37,7 @@ export default {
         canvasWidth:400,
         canvasHeight:40,
         ctx: null,
+        debug:ColorStore.debug,
         curMousePoint:0,
         lastCreatePos:undefined,
         showHint:false
@@ -50,6 +58,9 @@ export default {
                 val &= Math.abs(this.curMousePoint - ColorStore.stops[i].val) >= sizeOfElem
             }
             return val
+        },
+        debugText(){
+            return (this.debug)? 'Hide Debug View':'Show Debug View';
         }
     },
     methods:{
@@ -69,6 +80,10 @@ export default {
         changeColor(i,e){
             ColorStore.updateStopColor(i,e)
             this.$emit('repaint')
+        },
+        updateDebug(){
+            this.debug = ColorStore.toggleDebug();
+            this.$emit('repaint');
         },
         updatePosition({clientX}){
             let local_val = (clientX - this.$refs.colorbox.getBoundingClientRect().left)*2/this.$refs.colorbox.getBoundingClientRect().width - 1

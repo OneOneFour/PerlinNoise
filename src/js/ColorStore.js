@@ -2,6 +2,7 @@ import { generateColormap } from "./utils"
 
 const _data = {
     blend:1,
+    debug:false,
     stops:[
         {val:-1,color:'#0000ff'},
         {val:1,color:'#ff0000'}
@@ -14,6 +15,7 @@ const ColorStore = {
     get blend() { return _data.blend},
     get stops() { return _data.stops},
     get map() { return _data.map },
+    get debug(){return _data.debug},
     setBlend(val){
         _data.blend = val
         _data.map = generateColormap(_data.stops,_data.blend)
@@ -21,6 +23,10 @@ const ColorStore = {
     updateStopColor(i,newVal){
         _data.stops[i].color=newVal
         _data.map = generateColormap(_data.stops,_data.blend)
+    },
+    toggleDebug(){
+        _data.debug = !_data.debug;
+        return _data.debug;
     },
     addStop(val,color){
         if(typeof color === 'undefined'){

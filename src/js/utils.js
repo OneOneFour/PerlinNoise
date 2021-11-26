@@ -58,6 +58,19 @@ function islight(hex){
     let {r,g,b} = hextorgb(hex)
     return (r + g + b)/3 >= 127.5
 }
-
-export {valToColor,valToColorRGB,genRandomUnit,dotProduct,smootherstep,clamp,hextorgb,rgbtohex,generateColormap,islight};
+function toUnitVector({x,y}){
+    let mag = Math.sqrt(x*x + y*y);
+    return {x:x/mag,y:y/mag};
+}
+function scaleVector({x,y},sf){
+    return {x:x*sf,y:y*sf};
+}
+function rotateVector({x,y},phi){
+    // COUNTER CLOCKWISE
+    return { x: x*Math.cos(phi) - y*Math.sin(phi),y: x*Math.sin(phi) + y * Math.cos(phi)};
+}
+function addVector(a1,a2){
+    return {x: a1.x + a2.x, y:a1.y + a2.y};
+}
+export {valToColor,valToColorRGB,toUnitVector,addVector,scaleVector,rotateVector,genRandomUnit,dotProduct,smootherstep,clamp,hextorgb,rgbtohex,generateColormap,islight};
   
