@@ -5,7 +5,7 @@
             <input type="range" min="1" max="50" step="1" :value="store.perlinResolution" @input="updatePerlinResolution" class="resolution-range" />
             <div class="resolution-warning warning" v-if="store.perlinResolution < 5">
                 <h4><font-awesome-icon icon="exclamation-triangle"/> Warning!</h4>
-                <p>Fine perlin resolutions make take a while to generate and may crash your browser on systems with low memory.</p>
+                <p>Fine perlin resolutions may take a while to generate and may crash your browser on systems with low memory.</p>
             </div>
         </div>
         <tab-selector :tabs="getComponentArray" :names="['Manual','Auto']" @changetab="tabChanged" />
